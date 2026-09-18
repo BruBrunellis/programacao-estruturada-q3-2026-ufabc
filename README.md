@@ -9,8 +9,12 @@ Repositório de estudo e prática em **C** da disciplina **MCTA028-15**. O GitHu
 ```text
 .
 ├── aulas_teoricas/        # Resumos em Markdown das aulas disponíveis em PE/Aulas
-├── aulas_praticas/        # Exercícios realizados nas aulas práticas
-│   └── aula_01/ola_mundo.c
+├── aulas_exemplos/        # Demonstrações dos PDFs de teoria e prática
+│   ├── aula_teorica_01/   # Exemplo introdutório ola_mundo.c
+│   └── aula_pratica_01/   # Demonstração de paridade
+├── aulas_praticas/
+│   ├── conteudo_teorico/  # Transcrições dos PDFs das práticas
+│   └── exercicios_aulas_praticas/ # Códigos feitos pelo aluno, por aula
 ├── exercicios_moodle/    # Atividades e soluções destinadas ao Moodle
 ├── exercicios_livres/    # Treino independente e exercícios solicitados ao Codex
 ├── .vscode/             # Compilação, execução, depuração e extensão recomendada
@@ -74,7 +78,7 @@ Essas configurações são locais ao clone; precisam ser repetidas em outra máq
 
 ### 3. Compilar, executar e depurar
 
-1. Abra `aulas_praticas/aula_01/ola_mundo.c` e salve com `Ctrl+S`.
+1. Abra `aulas_exemplos/aula_teorica_01/ola_mundo.c` e salve com `Ctrl+S`.
 2. Use `Ctrl+Shift+B` para compilar. Os avisos e erros aparecem no terminal e no painel **Problemas**.
 3. Em **Terminal → Executar Tarefa**, selecione **C: compilar e executar arquivo ativo**. A saída esperada é `Ola, mundo! Ambiente C pronto para as aulas de PE.`
 4. Para depurar, clique na margem de uma linha de código para marcar um ponto de parada, pressione `F5` e escolha **C: depurar arquivo ativo (GDB)**. Inspecione as variáveis e avance com `F10`.
@@ -86,14 +90,14 @@ Também é possível compilar pelo terminal, a partir da raiz do repositório:
 
 ```powershell
 # Windows / PowerShell
-gcc -std=c17 -Wall -Wextra -Wpedantic -g -O0 aulas_praticas/aula_01/ola_mundo.c -o aulas_praticas/aula_01/ola_mundo.exe -lm
-.\aulas_praticas\aula_01\ola_mundo.exe
+gcc -std=c17 -Wall -Wextra -Wpedantic -g -O0 aulas_exemplos/aula_teorica_01/ola_mundo.c -o aulas_exemplos/aula_teorica_01/ola_mundo.exe -lm
+.\aulas_exemplos\aula_teorica_01\ola_mundo.exe
 ```
 
 ```sh
 # Linux
-gcc -std=c17 -Wall -Wextra -Wpedantic -g -O0 aulas_praticas/aula_01/ola_mundo.c -o aulas_praticas/aula_01/ola_mundo.out -lm
-./aulas_praticas/aula_01/ola_mundo.out
+gcc -std=c17 -Wall -Wextra -Wpedantic -g -O0 aulas_exemplos/aula_teorica_01/ola_mundo.c -o aulas_exemplos/aula_teorica_01/ola_mundo.out -lm
+./aulas_exemplos/aula_teorica_01/ola_mundo.out
 ```
 
 Para um programa dividido em arquivos, liste apenas os fontes desse programa no comando, por exemplo `gcc -std=c17 -Wall -Wextra -Wpedantic main.c funcoes.c -o programa.out -lm` (no Windows, use `programa.exe`). Adapte a tarefa quando chegar à modularização; não compile juntos arquivos de exercícios distintos com vários `main`.
@@ -128,8 +132,8 @@ Se ainda não houver clone nesse computador, faça a clonagem da etapa 2. Se hou
 ```sh
 git status
 git diff
-git add aulas_praticas/aula_01/ola_mundo.c
-# Troque o caminho acima pelos arquivos que você criou ou alterou.
+git add aulas_praticas/exercicios_aulas_praticas/aula_01/exercicio_01.c
+# Exemplo: use esse caminho depois de criar sua solução, ou indique seus outros arquivos.
 git diff --cached
 git commit -m "Resolve exercicio da aula 01"
 git push origin main
@@ -248,4 +252,11 @@ Referências preservadas conforme o plano de ensino, sem revisão de edições o
 
 ## Materiais de estudo
 
-O [índice de aulas teóricas](aulas_teoricas/README.md) lista os resumos disponíveis. Na preparação inicial havia apenas `01_TEORIA.pdf`; seu [resumo de linguagem C](aulas_teoricas/01_linguagem_c.md) identifica as páginas utilizadas e sinaliza correções técnicas. Os PDFs originais permanecem na pasta local PE e não integram este repositório.
+Materiais disponíveis em `PE/Aulas`, conferidos em 18/09/2026:
+
+| Origem | Conteúdo de estudo | Demonstrações |
+| --- | --- | --- |
+| `01_TEORIA.pdf` | [Resumo de linguagem C](aulas_teoricas/01_linguagem_c.md) | [Exemplo introdutório](aulas_exemplos/aula_teorica_01/README.md) |
+| `01_PRATICA.pdf` | [Transcrição da prática 01](aulas_praticas/conteudo_teorico/01_linguagem_c.md) | [Paridade de 1 até N](aulas_exemplos/aula_pratica_01/README.md) |
+
+Os [exemplos](aulas_exemplos/README.md) são demonstrações de referência. Escreva suas próprias soluções em [exercicios_aulas_praticas](aulas_praticas/exercicios_aulas_praticas/README.md), dentro da pasta da aula correspondente. Os índices de [teoria](aulas_teoricas/README.md) e [conteúdo das práticas](aulas_praticas/conteudo_teorico/README.md) identificam as fontes. Os PDFs originais permanecem na pasta local PE e não integram este repositório.
