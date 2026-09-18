@@ -1,0 +1,36 @@
+# Executaveis e resultados de compilacao
+*.exe
+*.out
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+*.pdb
+*.ilk
+*.dSYM/
+a.out
+build/
+bin/
+dist/
+
+# Arquivos locais e temporarios
+tmp/
+.tools/
+*.log
+*.tmp
+*.swp
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+.env
+.env.*
+!.env.example
+.vscode/*.local.json
+*.code-workspace
+
+# Materiais originais permanecem na pasta PE
+*.pdf
