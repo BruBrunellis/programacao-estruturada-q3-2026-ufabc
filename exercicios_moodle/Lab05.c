@@ -16,12 +16,11 @@ int main() {
         srand(seed);
 
         for (int i = 1; i <= 20; i++){
-            op1 = (rand()% (20 + 1)) - 10;
-            op2 = (rand()% (20 + 1)) - 10;
-            operador = rand()% 5 + 1;
-
-            while((operador == 4 || operador == 5) && op2 == 0)
-                { op2 = (rand()% (20 + 1)) - 10; }
+            do {
+                op1 = (rand()% (20 + 1)) - 10;
+                op2 = (rand()% (20 + 1)) - 10;
+                operador = rand()% 5 + 1;
+            } while ((operador == 4 || operador == 5) && op2 == 0);
 
             switch (operador){
                 case 1:
