@@ -11,6 +11,7 @@ Repositório de estudo e prática em **C** da disciplina **MCTA028-15**. O GitHu
 ├── aulas_teoricas/        # Resumos em Markdown das aulas disponíveis em PE/Aulas
 ├── aulas_exemplos/        # Demonstrações dos PDFs de teoria e prática
 │   ├── aula_teorica_01/   # Exemplo introdutório ola_mundo.c
+│   ├── aula_teorica_02/   # Funções, recursão e escopo
 │   └── aula_pratica_01/   # Demonstração de paridade
 ├── aulas_praticas/
 │   ├── conteudo_teorico/  # Transcrições dos PDFs das práticas
@@ -252,11 +253,12 @@ Referências preservadas conforme o plano de ensino, sem revisão de edições o
 
 ## Materiais de estudo
 
-Materiais disponíveis em `PE/Aulas`, conferidos em 18/09/2026:
+Materiais disponíveis em `PE/Aulas`, conferidos em 01/10/2026:
 
 | Origem | Conteúdo de estudo | Demonstrações |
 | --- | --- | --- |
 | `01_TEORIA.pdf` | [Resumo de linguagem C](aulas_teoricas/01_linguagem_c.md) | [Exemplo introdutório](aulas_exemplos/aula_teorica_01/README.md) |
+| `02_Teoria.pdf` | [Resumo de modularização](aulas_teoricas/02_modularizacao.md) | [Funções, recursão e escopo](aulas_exemplos/aula_teorica_02/README.md) |
 | `01_PRATICA.pdf` | [Transcrição da prática 01](aulas_praticas/conteudo_teorico/01_linguagem_c.md) | [Paridade de 1 até N](aulas_exemplos/aula_pratica_01/README.md) |
 
 Os [exemplos](aulas_exemplos/README.md) são demonstrações de referência. Escreva suas próprias soluções em [exercicios_aulas_praticas](aulas_praticas/exercicios_aulas_praticas/README.md), dentro da pasta da aula correspondente. Os índices de [teoria](aulas_teoricas/README.md) e [conteúdo das práticas](aulas_praticas/conteudo_teorico/README.md) identificam as fontes. Os PDFs originais permanecem na pasta local PE e não integram este repositório.
