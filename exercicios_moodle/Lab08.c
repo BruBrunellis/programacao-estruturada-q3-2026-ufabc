@@ -38,32 +38,43 @@ Exemplos (texto de saída conforme o Moodle):
 #include <stdio.h>
 
 void encontrarPrimosMersenne(int limite_n) {
-    int i, primo, mersenne;
     int encontrou = 0;
 
-    printf("Os primos de Mersenne menores que %d sao: ", limite_n);
+    for (int i = 2; ; i++) {
+        long long mersenne = (1LL << i) - 1;
+        if (mersenne >= limite_n) {
+            break;
+        }
 
-    for (i = 2; ; i++) {
-        // Verifica se i é primo
-        primo = 1; // Assume que i é primo
+        // O expoente primo não garante que o número de Mersenne seja primo.
+        int primo = 1;
         for (int j = 2; j * j <= i; j++) {
             if (i % j == 0) {
-                primo = 0; // Não é primo
+                primo = 0;
                 break;
             }
         }
-
-        if (primo) {
-            mersenne = (1 << i) - 1; // Calcula M_i = 2^i - 1
-            if (mersenne >= limite_n) {
-                break; // Sai do loop se M_i >= limite_n
-            }
-            if (encontrou) {
-                printf(", ");
-            }
-            printf("%d", mersenne);
-            encontrou = 1;
+        if (!primo) {
+            continue;
         }
+
+        for (long long j = 2; j * j <= mersenne; j++) {
+            if (mersenne % j == 0) {
+                primo = 0;
+                break;
+            }
+        }
+        if (!primo) {
+            continue;
+        }
+
+        if (encontrou) {
+            printf(", ");
+        } else {
+            printf("Os primos de Mersenne menores que %d sao: ", limite_n);
+        }
+        printf("%lld", mersenne);
+        encontrou = 1;
     }
 
     if (!encontrou) {
@@ -75,7 +86,7 @@ void encontrarPrimosMersenne(int limite_n) {
 
 int main() {
     int limite_n;
-    
+
     scanf("%d", &limite_n);
 
     encontrarPrimosMersenne(limite_n);
