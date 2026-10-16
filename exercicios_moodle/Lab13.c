@@ -146,7 +146,6 @@ Exemplos de execução:
 
 #include <stdio.h>
 
-
 #define MAX_ESQUINAS 30
 #define MAX_RUAS 50
 

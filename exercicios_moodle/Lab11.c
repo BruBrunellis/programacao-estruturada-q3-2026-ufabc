@@ -65,7 +65,9 @@ Exemplos de entrada e saída:
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 int palindromo(const char string[]) {
     // Implementação da função palindromo
@@ -100,13 +102,14 @@ int palindromo(const char string[]) {
 
 int main() {
 
+    #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
+    #endif
 
     char input[100];
 
     // Solicitar entrada do usuário
-    printf("Digite uma string (max 99 caracteres): ");
     fgets(input, sizeof(input), stdin);
 
     // Remover o caractere de nova linha, se presente
