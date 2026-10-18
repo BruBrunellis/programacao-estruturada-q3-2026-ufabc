@@ -122,6 +122,8 @@ O código da p. 35 diverge da fórmula no caso base e contém uma `/` solta; a v
 
 ## 7. Exercícios e material suplementar (p. 13, 37–38 e 41–48)
 
+Os [enunciados com dicas e casos de teste](../exercicios_livres/aula_teorica_02/README.md) estão disponíveis separadamente, sem soluções.
+
 Tente resolver os enunciados antes de consultar as demonstrações do material suplementar:
 
 | Exercício | Ideia e casos para conferir | Demonstração adaptada |

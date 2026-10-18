@@ -8,7 +8,7 @@ Repositório de estudo e prática em **C** da disciplina **MCTA028-15**. O GitHu
 
 ```text
 .
-├── aulas_teoricas/        # Resumos em Markdown das aulas disponíveis em PE/Aulas
+├── aulas_teoricas/        # Resumos e transcrições em Markdown de PE/Aulas
 ├── aulas_exemplos/        # Demonstrações dos PDFs de teoria e prática
 │   ├── aula_teorica_01/   # Exemplo introdutório ola_mundo.c
 │   ├── aula_teorica_02/   # Funções, recursão e escopo
@@ -17,7 +17,7 @@ Repositório de estudo e prática em **C** da disciplina **MCTA028-15**. O GitHu
 │   ├── conteudo_teorico/  # Transcrições dos PDFs das práticas
 │   └── exercicios_aulas_praticas/ # Códigos feitos pelo aluno, por aula
 ├── exercicios_moodle/    # Atividades e soluções destinadas ao Moodle
-├── exercicios_livres/    # Treino independente e exercícios solicitados ao Codex
+├── exercicios_livres/    # Treino e enunciados com dicas das aulas 02, 03 e 04
 ├── .vscode/             # Compilação, execução, depuração e extensão recomendada
 ├── .editorconfig        # Convenções de edição
 ├── .gitattributes       # Tratamento de arquivos texto entre sistemas
@@ -253,12 +253,16 @@ Referências preservadas conforme o plano de ensino, sem revisão de edições o
 
 ## Materiais de estudo
 
-Materiais disponíveis em `PE/Aulas`, conferidos em 01/10/2026:
+Materiais disponíveis em `PE/Aulas`; índice atualizado em 18/10/2026 (datas de consulta nos respectivos arquivos):
 
 | Origem | Conteúdo de estudo | Demonstrações |
 | --- | --- | --- |
 | `01_TEORIA.pdf` | [Resumo de linguagem C](aulas_teoricas/01_linguagem_c.md) | [Exemplo introdutório](aulas_exemplos/aula_teorica_01/README.md) |
 | `02_Teoria.pdf` | [Resumo de modularização](aulas_teoricas/02_modularizacao.md) | [Funções, recursão e escopo](aulas_exemplos/aula_teorica_02/README.md) |
+| `03_Teoria_Arranjos.pdf` | [Transcrição de arranjos](aulas_teoricas/03_arranjos.md) | Exemplos e suplemento na transcrição |
+| `04_TEORIA_Alocacao.pdf` | [Transcrição de alocação dinâmica](aulas_teoricas/04_alocacao_dinamica.md) | Exemplos e suplemento na transcrição |
 | `01_PRATICA.pdf` | [Transcrição da prática 01](aulas_praticas/conteudo_teorico/01_linguagem_c.md) | [Paridade de 1 até N](aulas_exemplos/aula_pratica_01/README.md) |
 
 Os [exemplos](aulas_exemplos/README.md) são demonstrações de referência. Escreva suas próprias soluções em [exercicios_aulas_praticas](aulas_praticas/exercicios_aulas_praticas/README.md), dentro da pasta da aula correspondente. Os índices de [teoria](aulas_teoricas/README.md) e [conteúdo das práticas](aulas_praticas/conteudo_teorico/README.md) identificam as fontes. Os PDFs originais permanecem na pasta local PE e não integram este repositório.
+
+Os enunciados propostos nas aulas teóricas 02, 03 e 04, com dicas e casos de teste, estão no [índice de exercícios livres](exercicios_livres/README.md). As listas distinguem o enunciado do professor dos complementos de estudo e não incluem soluções.
