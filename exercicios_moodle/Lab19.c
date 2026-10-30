@@ -291,3 +291,129 @@ Saída esperada:
 Referência: Figura e definições do livro de Thomas H. Cormen,
 Algoritmos: teoria e prática.
 */
+
+#include <limits.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define INFINITO LLONG_MAX
+#define NO_PREDECESSOR (-1)
+
+typedef struct {
+    long long dist; // Permite somas de pesos maiores que INT_MAX.
+    int prev;
+    int id;
+    int in_queue;
+} Vertice;
+
+void initialize_single_source(Vertice *vertices, int n, int source) {
+    for (int i = 0; i < n; i++) {
+        vertices[i] = (Vertice){INFINITO, NO_PREDECESSOR, i, 1};
+    }
+    vertices[source].dist = 0;
+}
+
+int extract_min(Vertice *vertices, int n) {
+    int best = -1;
+    for (int i = 0; i < n; i++) {
+        if (vertices[i].in_queue &&
+            (best == -1 || vertices[i].dist < vertices[best].dist)) {
+            best = i;
+        }
+    }
+    if (best != -1) {
+        vertices[best].in_queue = 0;
+    }
+    return best;
+}
+
+void relax(Vertice *vertices, int u, int v, int weight) {
+    if (vertices[u].dist != INFINITO &&
+        vertices[u].dist <= LLONG_MAX - weight &&
+        vertices[v].dist > vertices[u].dist + weight) {
+        vertices[v].dist = vertices[u].dist + weight;
+        vertices[v].prev = u;
+    }
+}
+
+void dijkstra(int **adj_matrix, int n, int source, int destination,
+              Vertice *vertices) {
+    initialize_single_source(vertices, n, source);
+    for (int i = 0; i < n; i++) {
+        int u = extract_min(vertices, n);
+        if (u == -1 || vertices[u].dist == INFINITO || u == destination) {
+            break;
+        }
+        for (int v = 0; v < n; v++) {
+            if (vertices[v].in_queue && adj_matrix[u][v] > 0) {
+                relax(vertices, u, v, adj_matrix[u][v]);
+            }
+        }
+    }
+}
+
+int print_path(Vertice *vertices, int source, int destination, int n) {
+    if (vertices[destination].dist == INFINITO) {
+        puts("Destino inatingivel");
+        return 1;
+    }
+    int *path = malloc((size_t)n * sizeof(*path));
+    if (path == NULL) {
+        return 0;
+    }
+    int len = 0;
+    for (int v = destination; v != NO_PREDECESSOR; v = vertices[v].prev) {
+        path[len++] = v;
+    }
+    printf("Distancia minima de %d para %d: %lld\n", source, destination,
+           vertices[destination].dist);
+    printf("Caminho: ");
+    for (int i = len - 1; i >= 0; i--) {
+        printf("%d%s", path[i], i == 0 ? "\n" : " -> ");
+    }
+    free(path);
+    return 1;
+}
+
+int main(void) {
+    int n, source, destination;
+    if (scanf("%d", &n) != 1 || n <= 0 ||
+        (size_t)n > SIZE_MAX / sizeof(int *) ||
+        (size_t)n > SIZE_MAX / sizeof(Vertice) ||
+        (size_t)n > SIZE_MAX / sizeof(int)) {
+        return 1;
+    }
+    int **matrix = calloc((size_t)n, sizeof(*matrix));
+    Vertice *vertices = malloc((size_t)n * sizeof(*vertices));
+    int status = 1;
+    if (matrix == NULL || vertices == NULL) {
+        goto cleanup;
+    }
+    for (int i = 0; i < n; i++) {
+        matrix[i] = malloc((size_t)n * sizeof(*matrix[i]));
+        if (matrix[i] == NULL) {
+            goto cleanup;
+        }
+        for (int j = 0; j < n; j++) {
+            if (scanf("%d", &matrix[i][j]) != 1 || matrix[i][j] < 0) {
+                goto cleanup;
+            }
+        }
+    }
+    if (scanf("%d%d", &source, &destination) != 2 || source < 0 ||
+        source >= n || destination < 0 || destination >= n) {
+        goto cleanup;
+    }
+    dijkstra(matrix, n, source, destination, vertices);
+    status = print_path(vertices, source, destination, n) ? 0 : 1;
+cleanup:
+    if (matrix != NULL) {
+        for (int i = 0; i < n; i++) {
+            free(matrix[i]);
+        }
+    }
+    free(matrix);
+    free(vertices);
+    return status;
+}

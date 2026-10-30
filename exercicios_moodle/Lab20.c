@@ -240,3 +240,149 @@ Para comparar a saída com um arquivo de referência, pode-se usar kdiff3,
 disponível para Linux, macOS e Windows:
     https://kdiff3.sourceforge.net/
 */
+
+#include <ctype.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int width;
+    int height;
+    int *pixels;
+} Image;
+
+typedef struct {
+    int width;
+    int height;
+    int *weights;
+} Filter;
+
+// PGM em texto tambem permite comentarios iniciados por '#'.
+static int read_int(FILE *file, int *value) {
+    int c;
+    do {
+        c = fgetc(file);
+        if (c == '#') {
+            while (c != '\n' && c != EOF) {
+                c = fgetc(file);
+            }
+        }
+    } while (c != EOF && isspace((unsigned char)c));
+    if (c == EOF) {
+        return 0;
+    }
+    ungetc(c, file);
+    return fscanf(file, "%d", value) == 1;
+}
+
+static int read_image(FILE *file, Image *image) {
+    char magic[3];
+    int maximum;
+    if (fscanf(file, "%2s", magic) != 1 || magic[0] != 'P' || magic[1] != '2' ||
+        !read_int(file, &image->width) || !read_int(file, &image->height) ||
+        !read_int(file, &maximum) || maximum != 255 ||
+        image->width <= 0 || image->width > 600 ||
+        image->height <= 0 || image->height > 600) {
+        return 0;
+    }
+    size_t count = (size_t)image->width * (size_t)image->height;
+    image->pixels = malloc(count * sizeof(*image->pixels));
+    if (image->pixels == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < count; i++) {
+        if (!read_int(file, &image->pixels[i]) ||
+            image->pixels[i] < 0 || image->pixels[i] > 255) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static int read_filter(FILE *file, Filter *filter) {
+    if (!read_int(file, &filter->width) || !read_int(file, &filter->height) ||
+        filter->width <= 0 || filter->height <= 0 ||
+        filter->width % 2 == 0 || filter->height % 2 == 0 ||
+        (size_t)filter->width > SIZE_MAX / sizeof(int) / (size_t)filter->height) {
+        return 0;
+    }
+    size_t count = (size_t)filter->width * (size_t)filter->height;
+    filter->weights = malloc(count * sizeof(*filter->weights));
+    if (filter->weights == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < count; i++) {
+        if (!read_int(file, &filter->weights[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int convolve(const Image *input, const Filter *filter, Image *output) {
+    output->width = input->width;
+    output->height = input->height;
+    output->pixels = malloc((size_t)input->width * (size_t)input->height *
+                            sizeof(*output->pixels));
+    if (output->pixels == NULL) {
+        return 0;
+    }
+    for (int y = 0; y < input->height; y++) {
+        for (int x = 0; x < input->width; x++) {
+            long long sum = 0;
+            // Usa a orientacao dos coeficientes definida pela formula do enunciado.
+            for (int i = 0; i < filter->height; i++) {
+                long long row = (long long)y + i - filter->height / 2;
+                if (row < 0 || row >= input->height) {
+                    continue;
+                }
+                for (int j = 0; j < filter->width; j++) {
+                    long long col = (long long)x + j - filter->width / 2;
+                    if (col >= 0 && col < input->width) {
+                        sum += (long long)filter->weights[(size_t)i * filter->width + j] *
+                               input->pixels[(size_t)row * input->width + (size_t)col];
+                    }
+                }
+            }
+            output->pixels[(size_t)y * input->width + x] =
+                sum < 0 ? 0 : sum > 255 ? 255 : (int)sum;
+        }
+    }
+    return 1;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        return 1;
+    }
+    FILE *image_file = fopen(argv[1], "r");
+    FILE *filter_file = fopen(argv[2], "r");
+    Image input = {0}, output = {0};
+    Filter filter = {0};
+    int status = 1;
+    if (image_file == NULL || filter_file == NULL ||
+        !read_image(image_file, &input) || !read_filter(filter_file, &filter) ||
+        !convolve(&input, &filter, &output)) {
+        goto cleanup;
+    }
+    printf("P2\n%d %d\n255\n", output.width, output.height);
+    for (int i = 0; i < output.height; i++) {
+        for (int j = 0; j < output.width; j++) {
+            printf("%d ", output.pixels[(size_t)i * output.width + j]);
+        }
+        putchar('\n');
+    }
+    status = 0;
+cleanup:
+    if (image_file != NULL) {
+        fclose(image_file);
+    }
+    if (filter_file != NULL) {
+        fclose(filter_file);
+    }
+    free(input.pixels);
+    free(output.pixels);
+    free(filter.weights);
+    return status;
+}

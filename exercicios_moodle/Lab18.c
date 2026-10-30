@@ -224,3 +224,187 @@ Exemplo 2 - Entrada (a sequência cifrada ocupa uma única linha):
 Saída:
     universidade
 */
+
+#include <ctype.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+unsigned long long multiply_mod(unsigned long long a, unsigned long long b,
+                                unsigned long long m) {
+    unsigned long long result = 0;
+    a %= m;
+    while (b > 0) {
+        // Soma modular sem calcular uma soma que possa exceder ULLONG_MAX.
+        if (b % 2 != 0) {
+            result = result >= m - a ? result - (m - a) : result + a;
+        }
+        a = a >= m - a ? a - (m - a) : a + a;
+        b /= 2;
+    }
+    return result;
+}
+
+unsigned long long modular_exponentiation(unsigned long long base,
+                                         unsigned long long exponent,
+                                         unsigned long long modulus) {
+    unsigned long long result = 1 % modulus;
+    base %= modulus;
+    while (exponent > 0) {
+        if (exponent % 2 != 0) {
+            result = multiply_mod(result, base, modulus);
+        }
+        base = multiply_mod(base, base, modulus);
+        exponent /= 2;
+    }
+    return result;
+}
+
+unsigned long long *encrypt_string(const char *plaintext_word,
+                                   unsigned long long e_key,
+                                   unsigned long long n_modulus,
+                                   size_t *out_len) {
+    size_t len = strlen(plaintext_word);
+    *out_len = 0;
+    if (len == 0 || len > SIZE_MAX / sizeof(unsigned long long)) {
+        return NULL;
+    }
+    unsigned long long *cipher = malloc(len * sizeof(*cipher));
+    if (cipher == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < len; i++) {
+        if (plaintext_word[i] < 'a' || plaintext_word[i] > 'z') {
+            free(cipher);
+            return NULL;
+        }
+        cipher[i] = modular_exponentiation(
+            (unsigned long long)(plaintext_word[i] - 'a'), e_key, n_modulus);
+    }
+    *out_len = len;
+    return cipher;
+}
+
+char *decrypt_string(const unsigned long long *ciphertext_array,
+                     size_t ciphertext_len, unsigned long long d_key,
+                     unsigned long long n_modulus) {
+    if (ciphertext_len == SIZE_MAX) {
+        return NULL;
+    }
+    char *word = malloc(ciphertext_len + 1);
+    if (word == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < ciphertext_len; i++) {
+        unsigned long long value = modular_exponentiation(
+            ciphertext_array[i], d_key, n_modulus);
+        if (value > 25) {
+            free(word);
+            return NULL;
+        }
+        word[i] = (char)('a' + value);
+    }
+    word[ciphertext_len] = '\0';
+    return word;
+}
+
+void print_result(const void *data, size_t len, char type_flag) {
+    if (type_flag == 'E') {
+        const unsigned long long *cipher = data;
+        for (size_t i = 0; i < len; i++) {
+            printf("%s%llX", i == 0 ? "" : " ", cipher[i]);
+        }
+        putchar('\n');
+    } else {
+        puts(data);
+    }
+}
+
+// Le uma palavra sem impor um limite fixo ao tamanho da entrada.
+static char *read_word(void) {
+    size_t len = 0, capacity = 32;
+    char *word = malloc(capacity);
+    int c;
+    if (word == NULL) {
+        return NULL;
+    }
+    do {
+        c = getchar();
+    } while (c != EOF && isspace((unsigned char)c));
+    while (c != EOF && !isspace((unsigned char)c)) {
+        if (len == capacity - 1) {
+            if (capacity > SIZE_MAX / 2) {
+                free(word);
+                return NULL;
+            }
+            char *larger = realloc(word, capacity * 2);
+            if (larger == NULL) {
+                free(word);
+                return NULL;
+            }
+            word = larger;
+            capacity *= 2;
+        }
+        word[len++] = (char)c;
+        c = getchar();
+    }
+    word[len] = '\0';
+    return word;
+}
+
+int main(void) {
+    char operation;
+    unsigned long long key, modulus;
+    if (scanf(" %c%llx%llx", &operation, &key, &modulus) != 3 ||
+        modulus == 0 || (operation != 'E' && operation != 'D')) {
+        return 1;
+    }
+    size_t len = 0;
+    unsigned long long *cipher = NULL;
+    char *word = NULL;
+    int status = 1;
+    if (operation == 'E') {
+        word = read_word();
+        if (word == NULL) {
+            goto cleanup;
+        }
+        cipher = encrypt_string(word, key, modulus, &len);
+        if (cipher == NULL) {
+            goto cleanup;
+        }
+        print_result(cipher, len, 'E');
+    } else {
+        unsigned long long value;
+        int scanned;
+        size_t capacity = 0;
+        while ((scanned = scanf("%llx", &value)) == 1) {
+            if (len == capacity) {
+                if (capacity > SIZE_MAX / sizeof(*cipher) / 2) {
+                    goto cleanup;
+                }
+                size_t next = capacity == 0 ? 32 : capacity * 2;
+                unsigned long long *larger = realloc(cipher, next * sizeof(*cipher));
+                if (larger == NULL) {
+                    goto cleanup;
+                }
+                cipher = larger;
+                capacity = next;
+            }
+            cipher[len++] = value;
+        }
+        if (scanned != EOF || len == 0) {
+            goto cleanup;
+        }
+        word = decrypt_string(cipher, len, key, modulus);
+        if (word == NULL) {
+            goto cleanup;
+        }
+        print_result(word, len, 'D');
+    }
+    status = 0;
+cleanup:
+    free(cipher);
+    free(word);
+    return status;
+}
